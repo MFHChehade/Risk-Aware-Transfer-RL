@@ -22,7 +22,7 @@ def create_reward_matrix(n, x, y, g, scenario=None):
 
 # Function to create GridWorld environment
 def create_grid_world(rewards):
-    return GridWorld(height=10, terminal_states=[(9, 0)], rewards=rewards, initial_state=(0, 0), proba=0.7)
+    return GridWorld(height=10, terminal_states=[(9, 0)], rewards=rewards, initial_state=(0, 0), proba=prob)
 
 # Function to create and train PolicyIterationAgent
 def create_and_train_policy_iteration_agent(grid_env, gamma=0.9):
@@ -32,13 +32,13 @@ def create_and_train_policy_iteration_agent(grid_env, gamma=0.9):
 
 # Function to plot policies and value functions
 def plot_policies_and_values(grid_env, agent, title = " "):
-    grid_env.plot_policy(agent.pi.deterministic_policy(), title=title)
-    grid_env.plot_policy(agent.pi.deterministic_policy(), np.transpose(agent.V.reshape(grid_env.height, grid_env.width)), title = title + " - Value Function")
+    grid_env.plot_policy(agent.pi, title=title)
+    grid_env.plot_policy(agent.pi, np.transpose(agent.V.reshape(grid_env.height, grid_env.width)), title = title + " - Value Function")
 
 # Define parameters
 n = 10
-x = 0.3
-y = 0.8
+x = x
+y = y
 g = 10
 
 # Create reward matrices for different scenarios
