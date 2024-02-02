@@ -72,22 +72,7 @@ class QLearningAgent(ValueBasedAgent):
         return self.action_selection_policy.select_action(self.Q[state])
     
     # # Method to update Q-values based on experience
-    # def update(self, state, action, reward, next_state, done):
-    #     """
-    #     Update the Q-values.
-
-    #     Parameters:
-    #     - state: The current state.
-    #     - action: The chosen action.
-    #     - reward: The reward received.
-    #     - next_state: The next state.
-    #     """
-    #     if not self.infinite_horizon and done:
-    #         self.Q[state, action] += self.alpha * (reward - self.Q[state, action])
-    #     else:
-    #         self.Q[state, action] += self.alpha * (reward + self.gamma * np.max(self.Q[next_state]) - self.Q[state, action])
-
-    def update(self, state, action, reward, next_state, done, episode):
+    def update(self, state, action, reward, next_state, done):
         """
         Update the Q-values.
 
@@ -96,15 +81,30 @@ class QLearningAgent(ValueBasedAgent):
         - action: The chosen action.
         - reward: The reward received.
         - next_state: The next state.
-        - done: Whether the episode is done.
-        - episode: The current episode number.
         """
-        current_alpha = 1.0 / (episode + 1)  # Adding 1 to avoid division by zero for the first episode
-
         if not self.infinite_horizon and done:
-            self.Q[state, action] += current_alpha * (reward - self.Q[state, action])
+            self.Q[state, action] += self.alpha * (reward - self.Q[state, action])
         else:
-            self.Q[state, action] += current_alpha * (reward + self.gamma * np.max(self.Q[next_state]) - self.Q[state, action])
+            self.Q[state, action] += self.alpha * (reward + self.gamma * np.max(self.Q[next_state]) - self.Q[state, action])
+
+    # def update(self, state, action, reward, next_state, done, episode):
+    #     """
+    #     Update the Q-values.
+
+    #     Parameters:
+    #     - state: The current state.
+    #     - action: The chosen action.
+    #     - reward: The reward received.
+    #     - next_state: The next state.
+    #     - done: Whether the episode is done.
+    #     - episode: The current episode number.
+    #     """
+    #     current_alpha = 1.0 / (episode + 1)  # Adding 1 to avoid division by zero for the first episode
+
+    #     if not self.infinite_horizon and done:
+    #         self.Q[state, action] += current_alpha * (reward - self.Q[state, action])
+    #     else:
+    #         self.Q[state, action] += current_alpha * (reward + self.gamma * np.max(self.Q[next_state]) - self.Q[state, action])
     
     # Method to train the Q-learning agent
     def train(self, n_episodes=1000, max_steps=1000, verbose=True):
@@ -133,7 +133,8 @@ class QLearningAgent(ValueBasedAgent):
                 steps +=1
                 action = self.choose_action(state)
                 next_state, reward, done, _ = self.env.step(action)
-                self.update(state, action, reward, next_state, done, episode)
+                self.update(state, action, reward, next_state, done)
+                # self.update(state, action, reward, next_state, done, episode)
                 state = next_state
                 total_reward += reward
                 if done and self.infinite_horizon == False:
